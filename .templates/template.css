@@ -1,0 +1,23 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 
+ * Date Modified : 
+ * 
+ * What file is for
+ */
+
+/* Phone */
+@media (max-width:479px) {
+
+}
+
+/* Tablet */
+@media (min-width:480px) and (max-width:767px) {
+    
+}
+
+/* PC */
+@media (min-width:768px) {
+
+}
