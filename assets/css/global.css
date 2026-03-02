@@ -1,0 +1,21 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 02 03 26
+ * Date Modified : 02 03 26
+ * 
+ * Global formating and imports
+ */
+
+/* Imports */
+@import url(./colour.css);
+
+/* Formating */
+body {
+    background-color: var(--bg-colour);
+    color: var(--fg-colour);
+}
+
+.trackpad {
+    border-radius: 100%;
+}
