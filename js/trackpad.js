@@ -30,6 +30,9 @@ class Trackpad {
         }
         this.x = 0;
         this.y = 0;
+        let colour = "rgba(150, 150, 150, 0.5)";
+        this.ctx.strokeStyle = colour;
+        this.ctx.fillStyle = colour;
 
         const track_mouse = (event) => {
             this.#get_pos(event);
@@ -37,10 +40,12 @@ class Trackpad {
         };
         const start = (event) => {
             this.c.addEventListener("mousemove", track_mouse);
+            this.c.addEventListener("touchmove", track_mouse);
             track_mouse(event);
         }
         const end = () => {
             this.c.removeEventListener("mousemove", track_mouse);
+            this.c.removeEventListener("touchmove", track_mouse);  
             this.x = 0;
             this.y = 0;
             this.render();
@@ -51,7 +56,6 @@ class Trackpad {
         this.c.addEventListener("pointerup", end);
 
         // mobile support 
-        this.c.addEventListener("touchstart", start);
         this.c.addEventListener("touchend", end);
 
         // leaving element
@@ -66,12 +70,21 @@ class Trackpad {
         let y = this.y / this.extrema;
         let mult = (x ** 2 + y ** 2) ** (1 / 2);
         x *= mult; y *= mult;
-        return [x, y];
+        return {x:x, y:y};
     }
 
     #get_pos(event) {
-        let x = event.x - this.c.offsetLeft - this.center;
-        let y = event.y - this.c.offsetTop - this.center;
+        let x = 0; let y = 0    ;
+        if (event.touches) {
+            let touch = event.touches[0];
+            x = touch.clientX;
+            y = touch.clientY;
+        } else {
+            x = event.x;
+            y = event.y;
+        }
+        x -= this.c.offsetLeft + this.center;
+        y -= this.c.offsetTop + this.center;
 
         let dist = (x ** 2 + y ** 2) ** (1 / 2);
         if (dist > this.extrema) {
@@ -102,7 +115,7 @@ class Trackpad {
         this.ctx.closePath();
 
         this.ctx.lineWidth = 2;
-        this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
+        // this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
         this.ctx.stroke();
     }
 
@@ -117,14 +130,14 @@ class Trackpad {
         this.ctx.arc(this.center, this.center, this.center - 4, 0, 2 * Math.PI);
         this.ctx.closePath();
         this.ctx.lineWidth = this.border;
-        this.ctx.strokeStyle = "black";
+        // this.ctx.strokeStyle = this.colour;
         this.ctx.stroke();
 
         // circle at this.x, this.y, or touching boudary at maximum
         this.ctx.beginPath();
         this.ctx.arc(this.x + this.center, this.y + this.center, this.user_radius, 0, 2 * Math.PI);
         this.ctx.closePath();
-        this.ctx.fillStyle = "rgba(150, 150, 150, 0.5)";
+        // this.ctx.fillStyle = this.colour;
         this.ctx.fill();
     }
 }
