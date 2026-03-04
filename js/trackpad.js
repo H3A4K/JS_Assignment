@@ -31,31 +31,35 @@ class Trackpad {
         this.x = 0;
         this.y = 0;
 
-        let track_mouse = (event) => {
+        const track_mouse = (event) => {
             this.#get_pos(event);
             this.render();
         };
-        this.c.addEventListener("pointerdown", (event) => {
+        const start = (event) => {
+            this.c.addEventListener("mousemove", track_mouse);
             track_mouse(event);
-            this.c.addEventListener("mousemove", track_mouse)
-        });
-
-        this.c.addEventListener("pointerup", () => {
+        }
+        const end = () => {
             this.c.removeEventListener("mousemove", track_mouse);
             this.x = 0;
             this.y = 0;
             this.render();
-        });
+        }
 
-        this.c.addEventListener("mouseleave", () => {
-            this.c.removeEventListener("mousemove", track_mouse);
-            this.x = 0;
-            this.y = 0;
-            this.render();
-        });
+        // browser support
+        this.c.addEventListener("pointerdown", start);
+        this.c.addEventListener("pointerup", end);
+
+        // mobile support 
+        this.c.addEventListener("touchstart", start);
+        this.c.addEventListener("touchend", end);
+
+        // leaving element
+        this.c.addEventListener("mouseleave", end);
 
         this.render();
     }
+
 
     get_adjusted_vector() {
         let x = this.x / this.extrema;
