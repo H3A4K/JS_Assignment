@@ -30,6 +30,7 @@ class Trackpad {
         }
         this.x = 0;
         this.y = 0;
+        
         let colour = "rgba(150, 150, 150, 0.5)";
         this.ctx.strokeStyle = colour;
         this.ctx.fillStyle = colour;

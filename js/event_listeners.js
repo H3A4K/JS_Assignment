@@ -11,11 +11,12 @@ window.addEventListener("load", () => {
     const c = document.getElementById("banner");
     const ctx = banner.getContext("2d");
     function adjust_view_port() {
-        c.width = window.outerWidth;
-        c.height = window.innerHeight;
+        // c.width = window.innerWidth;
+        // c.height = window.innerHeight;
+        c.width = screen.width;
+        c.height = screen.height;
+        draw();
     }
-    window.addEventListener("", adjust_view_port);
-    adjust_view_port();
 
     trackpad = new Trackpad("trackpad");
     
@@ -53,6 +54,7 @@ window.addEventListener("load", () => {
     // function move_to_game() {
     //     // Nothing here yet
     // }
-
+    window.addEventListener("resize", adjust_view_port);
+    adjust_view_port();
 });
 
