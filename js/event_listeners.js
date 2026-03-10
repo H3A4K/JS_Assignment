@@ -18,15 +18,15 @@ window.addEventListener("load", () => {
         draw();
     }
 
-    trackpad = new Trackpad("trackpad");
-    
+    // controler = new Trackpad("controls");
+    controler = new Keyboard();
 
     ball = {
         x: 100, y: 100, radius: 10
     }
 
     function update() {
-        let vector = trackpad.get_adjusted_vector();
+        let vector = controler.get_adjusted_vector();
         ball.x += vector.x;
         ball.y += vector.y;
         draw();

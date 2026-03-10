@@ -4,21 +4,24 @@
  * Date Created : 23 02 26
  * Date Modified : 23 02 26
  * 
- * Houses the class and methods for creating a trackpad
+ * Houses the class and methods for moving player objects
  */
 
-
-/**
- * Function description
- * 
- * @param {type} input
- * 
- * @returns output
- */
 class Trackpad {
-    constructor(canvas_ID) {
-        this.c = document.getElementById(canvas_ID);
+    /**
+     * Creates a mobile + desktop canvas element on a parent element
+     * 
+     * @param {String} parent_ID the HTML id of the element that should house the trackpad
+     */
+    constructor(parent_ID) {
+        // create canvas element
+        const p = document.getElementById(parent_ID);
+        this.c = document.createElement("canvas");
+        this.c.width = 300;
+        this.c.height = 300;
         this.c.classList.add("trackpad");
+        p.appendChild(this.c);
+
         this.ctx = this.c.getContext("2d");
         this.center = Math.min(this.c.width, this.c.height) / 2; // makes this a square
         this.user_radius = 25;
@@ -140,5 +143,57 @@ class Trackpad {
         this.ctx.closePath();
         // this.ctx.fillStyle = this.colour;
         this.ctx.fill();
+    }
+}
+
+class Keyboard {
+    constructor() {
+        this.keysPressed = {};
+        this.v_x = 0;
+        this.v_y = 0;
+        document.addEventListener("keydown", (event) => {
+            this.keysPressed[event.code] = true;
+            this.#inputs();
+        });
+
+        document.addEventListener("keyup", (event) => {
+            delete this.keysPressed[event.code];
+            this.#inputs();
+        })
+    }
+
+    #inputs() {
+        this.v_x = 0;
+        this.v_y = 0;
+        let factor = 1;
+        // console.log(this.keysPressed);
+        Object.keys(this.keysPressed).forEach(key => {
+            switch (key) {
+                case "KeyW": // Up
+                    this.v_y -= 1;
+                    break;
+                case "KeyA": // Left
+                    this.v_x -= 1;
+                    break;
+                case "KeyS": // Down
+                    this.v_y += 1;
+                    break;
+                case "KeyD": // Right
+                    this.v_x += 1;
+                    break;
+                case "ShiftLeft": // Slow
+                    factor = 0.5;
+            }
+        });
+        if (Math.abs(this.v_x) + Math.abs(this.v_y) > 1) {
+            this.v_x /= Math.sqrt(2);
+            this.v_y /= Math.sqrt(2);
+        }
+        this.v_x *= factor;
+        this.v_y *= factor;
+    }
+
+    get_adjusted_vector() {
+        return {x:this.v_x, y:this.v_y};
     }
 }
