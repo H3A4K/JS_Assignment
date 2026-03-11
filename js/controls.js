@@ -1,8 +1,8 @@
 /**
  * Author : Alexander Perlock
  * MACID : perlocka
- * Date Created : 23 02 26
- * Date Modified : 23 02 26
+ * Date Created : 02 03 26
+ * Date Modified : 09 03 26
  * 
  * Houses the class and methods for moving player objects
  */
@@ -13,7 +13,7 @@ class Trackpad {
      * 
      * @param {String} parent_ID the HTML id of the element that should house the trackpad
      */
-    constructor(parent_ID) {
+    constructor(parent_ID = "controls") {
         // create canvas element
         const p = document.getElementById(parent_ID);
         this.c = document.createElement("canvas");

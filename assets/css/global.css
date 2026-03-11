@@ -2,7 +2,7 @@
  * Author : Alexander Perlock
  * MACID : perlocka
  * Date Created : 02 03 26
- * Date Modified : 02 03 26
+ * Date Modified : 10 03 26
  * 
  * Global formating and imports
  */
@@ -19,7 +19,7 @@
 }
 
 html {
-    background-color: #222;
+    background-color: var(--bg-colour);
 }
 
 body {
@@ -39,8 +39,24 @@ body {
     /* width: 50vmin;
     height: 100vmin; */
     background-color: #222;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
+#display {
+    display: block;
+    align-items: center;
+}
+
+#display > img {
+    filter: invert(75%);
+    /* margin-left: 25%; */
+    /* margin-bottom: 10%; */
+    z-index: 10;
+    width: 33%;
+    padding: 12.5%;
+}
 
 .trackpad {
     position:absolute;
@@ -51,8 +67,13 @@ body {
 }
 
 @media (min-width: 720px) {
-    /* .main {
-        width: 100vmin;
-        height: 50vmin;
-    } */
+    #display {
+        display: flex;
+    }
+
+    #display > img {
+        margin-top: 10%;
+        padding: 12.5%;
+    }
+    
 }
