@@ -75,7 +75,7 @@ class Setup extends Page {
 
         disp.appendChild(k);
         disp.appendChild(t);
-        console.log("opened")
+        console.log("opened");
     }
 
     get_target() {

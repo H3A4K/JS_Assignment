@@ -23,13 +23,13 @@ class Trackpad {
         p.appendChild(this.c);
 
         this.ctx = this.c.getContext("2d");
-        this.center = Math.min(this.c.width, this.c.height) / 2; // makes this a square
-        this.user_radius = 25;
-        this.border = 5;
-        this.extrema = this.center - this.border - this.user_radius;
-        this.grid = {
-            minor_radius : this.center - 30,
-            major_radius : 30
+        this.CENTER = Math.min(this.c.width, this.c.height) / 2; // makes this a square
+        this.USER_RADIUS = 25;
+        this.BORDER = 5;
+        this.EXTREMA = this.CENTER - this.BORDER - this.USER_RADIUS;
+        this.GRID = {
+            MINOR_RADIUS : this.CENTER - 30,
+            MAJOR_RADIUS : 30
         }
         this.x = 0;
         this.y = 0;
@@ -70,8 +70,8 @@ class Trackpad {
 
 
     get_adjusted_vector() {
-        let x = this.x / this.extrema;
-        let y = this.y / this.extrema;
+        let x = this.x / this.EXTREMA;
+        let y = this.y / this.EXTREMA;
         let mult = (x ** 2 + y ** 2) ** (1 / 2);
         x *= mult; y *= mult;
         return {x:x, y:y};
@@ -87,12 +87,12 @@ class Trackpad {
             x = event.x;
             y = event.y;
         }
-        x -= this.c.offsetLeft + this.center;
-        y -= this.c.offsetTop + this.center;
+        x -= this.c.offsetLeft + this.CENTER;
+        y -= this.c.offsetTop + this.CENTER;
 
         let dist = (x ** 2 + y ** 2) ** (1 / 2);
-        if (dist > this.extrema) {
-            let mult = this.extrema / dist;
+        if (dist > this.EXTREMA) {
+            let mult = this.EXTREMA / dist;
             x *= mult;
             y *= mult;
         }
@@ -104,17 +104,17 @@ class Trackpad {
     #draw_cross() {
         this.ctx.beginPath();
 
-        this.ctx.moveTo(this.center - this.grid.major_radius, this.center);
-        this.ctx.lineTo(this.center - this.grid.minor_radius, this.center);
+        this.ctx.moveTo(this.CENTER - this.GRID.MAJOR_RADIUS, this.CENTER);
+        this.ctx.lineTo(this.CENTER - this.GRID.MINOR_RADIUS, this.CENTER);
 
-        this.ctx.moveTo(this.center + this.grid.major_radius, this.center);
-        this.ctx.lineTo(this.center + this.grid.minor_radius, this.center);
+        this.ctx.moveTo(this.CENTER + this.GRID.MAJOR_RADIUS, this.CENTER);
+        this.ctx.lineTo(this.CENTER + this.GRID.MINOR_RADIUS, this.CENTER);
 
-        this.ctx.moveTo(this.center, this.center - this.grid.major_radius);
-        this.ctx.lineTo(this.center, this.center - this.grid.minor_radius);
+        this.ctx.moveTo(this.CENTER, this.CENTER - this.GRID.MAJOR_RADIUS);
+        this.ctx.lineTo(this.CENTER, this.CENTER - this.GRID.MINOR_RADIUS);
 
-        this.ctx.moveTo(this.center, this.center + this.grid.major_radius);
-        this.ctx.lineTo(this.center, this.center + this.grid.minor_radius);
+        this.ctx.moveTo(this.CENTER, this.CENTER + this.GRID.MAJOR_RADIUS);
+        this.ctx.lineTo(this.CENTER, this.CENTER + this.GRID.MINOR_RADIUS);
 
         this.ctx.closePath();
 
@@ -131,15 +131,15 @@ class Trackpad {
 
         // outer circle boundary
         this.ctx.beginPath();
-        this.ctx.arc(this.center, this.center, this.center - 4, 0, 2 * Math.PI);
+        this.ctx.arc(this.CENTER, this.CENTER, this.CENTER - 4, 0, 2 * Math.PI);
         this.ctx.closePath();
-        this.ctx.lineWidth = this.border;
+        this.ctx.lineWidth = this.BORDER;
         // this.ctx.strokeStyle = this.colour;
         this.ctx.stroke();
 
         // circle at this.x, this.y, or touching boudary at maximum
         this.ctx.beginPath();
-        this.ctx.arc(this.x + this.center, this.y + this.center, this.user_radius, 0, 2 * Math.PI);
+        this.ctx.arc(this.x + this.CENTER, this.y + this.CENTER, this.USER_RADIUS, 0, 2 * Math.PI);
         this.ctx.closePath();
         // this.ctx.fillStyle = this.colour;
         this.ctx.fill();

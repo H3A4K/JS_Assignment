@@ -13,6 +13,10 @@ window.addEventListener("load", () => {
 
     let activeInstance = new Splash(c, ctx);
 
+    const r = new GameMap();
+
+    console.log(r);
+
     // let controler = new Trackpad("controls");
     // let controler = new Keyboard();
 
@@ -43,9 +47,9 @@ window.addEventListener("load", () => {
 
     setInterval(() => {
         activeInstance.update();
-        if (activeInstance.end) {
-            change_instance(activeInstance.get_target());
-        }
+        // if (activeInstance.end) {
+        //     change_instance(activeInstance.get_target());
+        // }
     }, 1);
     
     // Allows for resizing the canvas
