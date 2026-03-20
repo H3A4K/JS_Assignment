@@ -13,21 +13,59 @@ window.addEventListener("load", () => {
     let activeInstance =  new Splash();
 
     const exit = document.getElementById("exit");
-    exit.addEventListener("mousedown", () => change_instance())
+    exit.addEventListener("mousedown", () => {
+        activeInstance.clear(c, ctx); 
+        change_instance(Start);
+    });
 
-    function change_instance() {
-        let target = activeInstance.get_target(c, ctx)
+    function add_to_score(s) {
+        if (s === -1) { return }
+        let scores = localStorage.scores;
+        if (!scores) { 
+            scores = [] 
+        } else {
+            scores = JSON.parse(scores);
+        }
+        scores.push(s);
+        localStorage.scores = JSON.stringify(scores);
+    }
 
+    function change_instance(target) {
         if (!target) { return }
+        latest_score = null;
+        switch (true) {
+            case activeInstance instanceof Game:
+                latest_score = activeInstance.get_score();
+                add_to_score(latest_score);
+                break;
+        }
+
+        console.log(activeInstance, activeInstance instanceof Game, latest_score);
 
         switch (target) {
-            case Splash: case Setup: case Start:
+            case Splash: 
+                c.classList.remove("hidden");
+                activeInstance = new target();
+                break;
+            case Setup: case Start:
+                c.classList.add("hidden");
                 activeInstance = new target();
                 break;
             case Game:
-                let controller_string = JSON.parse(localStorage.settings).controller;
+                c.classList.remove("hidden");
+                let ls = localStorage.settings;
+                let controller_string;
+                if (!ls) {
+                    controller_string = "Trackpad";
+                } else {
+                    controller_string = JSON.parse(localStorage.settings).controller;
+                }
                 let controller = controller_string == "Keyboard" ? new Keyboard() : new Trackpad();
                 activeInstance = new target(controller);
+                break;
+            case Scoreboard:
+                c.classList.add("hidden");
+                activeInstance = new target(latest_score);
                 break;
         }
         console.log(activeInstance)
@@ -36,7 +74,7 @@ window.addEventListener("load", () => {
     setInterval(() => {
         activeInstance.update(c, ctx);
         if (activeInstance.end) {
-            change_instance();
+            change_instance(activeInstance.get_target(c, ctx));
         }
     }, 1);
 
@@ -44,7 +82,7 @@ window.addEventListener("load", () => {
     // Allows for resizing the canvas
     function adjust_view_port() {
         c.width = screen.width * 1;
-        c.height = screen.height * 1;
+        c.height = screen.height * 0.9;
 
         activeInstance.update(c, ctx);
     }

@@ -54,9 +54,9 @@ class Room {
     }
 
     draw(ctx, factor, colour = "rgba(0, 255, 0, 0.5)") {
-        if (this.x === 0 && this.y === 0) {
-            colour = "rgba(255, 215, 0, 1)";
-        }
+        // if (this.x === 0 && this.y === 0) {
+        //     colour = "rgba(255, 215, 0, 1)";
+        // }
         let half = factor / 2;
         let space_between = factor / 16;
 

@@ -36,11 +36,17 @@ class Page {
         return e;
     }   
 
-    get_target() {
+    get_target(c, ctx) {
         return this.target;
     }
 
     update() { }
+
+    clear(c, ctx) {
+        const disp = document.getElementById("display");
+        disp.innerHTML = "";
+        ctx.reset();
+    }
 }
 
 /**
@@ -52,12 +58,37 @@ class Splash extends Page {
         super();
         this.target = Start;
 
-        this.#render();
-        setTimeout(() => this.end = 1, 1000);
+        this.graphic_size = 0;
+
+        setTimeout(() => this.end = 1, 1 * 1000);
     }
 
-    #render() {
+    get_target(c, ctx) {
+        this.clear(c, ctx);
+        document.querySelector("header").childNodes.forEach(child => child.classList.remove("hidden"));
+        return super.get_target();
+    }
 
+    update(c, ctx) {
+        if (this.graphic_size < 2) {
+            this.graphic_size += 0.01;
+        }
+        this.#render(c, ctx)
+    }
+
+    #render(c, ctx) {
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.setTransform(1, 0, 0, 1, c.width * 0.5, c.height * 0.25);
+
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.font = `${30 * this.graphic_size}px Arial`;
+        ctx.textAlign = "center";
+
+        ctx.fillText("Maze Game", 0, -80);
+
+        ctx.fillRect(-20 * this.graphic_size, -20 * this.graphic_size, 2*20 * this.graphic_size, 2*20 * this.graphic_size);
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 }
 
@@ -99,20 +130,20 @@ class Setup extends Page {
     }
 
 
-    get_target() {
+    get_target(c, ctx) {
         if (this.activeFocus) {
-            const disp = document.getElementById("display");
-            disp.innerHTML = "";
+            this.clear(c, ctx)
             this.settings.controller = this.activeFocus.name;
             localStorage.settings = JSON.stringify(this.settings);
-            return super.get_target();
+            c.classList.add("hidden")
+            return super.get_target(c, ctx);
         }
     }
 }
 
 class Start extends Page {
-    constructor(c, ctx) {
-        super(c, ctx);
+    constructor() {
+        super();
         this.target = Game;
 
         this.create_overlay();
@@ -121,28 +152,62 @@ class Start extends Page {
     create_overlay() {
         const disp = super.create_overlay();
 
-        const s = this.create_e(disp, "h1", "Start", undefined, ["clickable"]);
+        const start = this.create_e(disp, "h1", "Start", undefined, ["clickable"]);
 
-        const c = this.create_e(disp, "h1", "Controls", undefined, ["clickable"]);
+        const controls = this.create_e(disp, "h1", "Controls", undefined, ["clickable"]);
+
+        const scores = this.create_e(disp, "h1", "Scoreboard", undefined, ["clickable"]);
 
         const choose = (focus) => {
             this.activeFocus = focus;
             this.end = 1
         }
 
-        s.addEventListener("mousedown", () => choose(Game));
-        c.addEventListener("mousedown", () => choose(Setup));
+        start.addEventListener("mousedown", () => choose(Game));
+        controls.addEventListener("mousedown", () => choose(Setup));
+        scores.addEventListener("mousedown", () => choose(Scoreboard));
 
     }
 
-    get_target() {
+    get_target(c, ctx) {
         if (this.activeFocus) {
-            const disp = document.getElementById("display");
-            disp.innerHTML = "";
+            this.clear(c, ctx);
             return this.activeFocus;
         }
     }
 
+}
+
+class Scoreboard extends Page {
+    constructor(score) {
+        super();
+        this.target = Start;
+
+        this.create_overlay(score);
+    }
+
+    get_target(c, ctx) {
+        this.clear(c, ctx);
+        return super.get_target(c, ctx);
+    }
+
+    create_overlay(score) {
+        const disp = super.create_overlay();
+        const exit = this.create_e(disp, "h1", "Exit", undefined, ["clickable"]);
+        exit.addEventListener("mousedown", () => this.end = 1);
+
+        if (score) {
+            this.create_e(disp, "p", `Your time was ${score}`)
+        }
+        let scores_e = this.create_e(disp, "ul");
+        let scores = localStorage.scores;
+        if (!scores) {
+            scores = [];
+        } else {
+            scores = JSON.parse(scores);
+        }
+        scores.reverse().splice(0, 10).forEach(score => this.create_e(scores_e, "li", `${score}s`));
+    }
 }
 
 /**
@@ -152,25 +217,38 @@ class Game extends Page {
     constructor(controller = new Trackpad("controls")) {
         super();
         this.controller = controller;
-        this.map = new GameMap(5);
+        this.map = new GameMap(100);
         this.factor = 256;
-        this.target = Start;
+        this.target = Scoreboard;
+        this.score = 0;
 
         this.current_room = this.map.start;
         this.player = {x: this.current_room.x, y: this.current_room.y};
 
     }
 
-    get_target(c, ctx) {
-        ctx.clearRect(0, 0, c.width, c.height);
+    get_score() {
+        if (!this.end) {
+            return -1;
+        }
+
+        return this.score / 1000;
+    }
+
+    clear(c, ctx) {
+        super.clear(c, ctx);
         const controls = document.getElementById("controls");
         controls.innerHTML = "";
+    }
+
+    get_target(c, ctx) {
+        this.clear(c, ctx);
 
         return this.target;
     }
 
     update(c, ctx) {
-        console.log()
+        this.score++;
         this.move();
         this.#render(c, ctx);
     }
@@ -190,7 +268,6 @@ class Game extends Page {
 
             if (this.current_room === this.map.end) {
                 this.end = 1;
-                console.log("done");
             }
         }
     }
@@ -230,9 +307,9 @@ class Game extends Page {
         let transX = c.width * 0.5 - this.player.x * this.factor;
         let transY = c.height * 0.5 - this.player.y * this.factor;
 
-        ctx.setTransform(this.factor, 0, 0, this.factor, transX, transY)
+        ctx.setTransform(this.factor, 0, 0, this.factor, transX, transY);
         this.map.draw(ctx, 1);
-        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
 
         ctx.fillStyle = "red";
         ctx.arc(c.width / 2, c.height / 2, 5, 0, 2 * Math.PI);
