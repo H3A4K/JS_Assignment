@@ -15,6 +15,27 @@ class Page {
         this.end = 0;
     }
 
+    create_overlay() {
+        const disp = document.getElementById("display");
+        return disp;
+    }
+
+    create_e(parent, type = "p", innerText, id, classes) {
+        const e = document.createElement(type);
+        if (innerText) {
+            e.innerHTML = innerText;
+        }
+        if (id) {
+            e.id = id;
+        }
+        if (classes) {
+            classes.forEach(c => e.classList.add(c));
+        }
+
+        parent.appendChild(e);
+        return e;
+    }   
+
     get_target() {
         return this.target;
     }
@@ -29,7 +50,7 @@ class Splash extends Page {
 
     constructor() {
         super();
-        this.target = Setup;
+        this.target = Start;
 
         this.#render();
         setTimeout(() => this.end = 1, 1000);
@@ -48,38 +69,40 @@ class Setup extends Page {
         super();
         this.activeFocus = null;
         this.target = Start;
-        this.end = 0;
         this.settings = {controller : null};
 
+        this.create_overlay();
+
+    }
+
+    create_overlay() {
+        const disp = super.create_overlay();
+
+        const k = this.create_e(disp, "div", undefined, undefined, ["clickable"]);
+        this.create_e(k, "h1", "Keyboard");
+        this.create_e(k, "p", "<ul><li>W - Up</li><li>A - Left</li><li>S - Down</li><li>D - Right</li>");
+
+        const t = this.create_e(disp, "div", undefined, undefined, ["clickable"]);
+        this.create_e(t, "h1", "Touchpad");
+        this.create_e(t, "p", "Creates a on-screen joystick style touchpad");
 
         const choose = (focus) => {
             this.activeFocus = focus;
             this.end = 1
         }
 
-        const disp = document.getElementById("display");
-        const k = document.createElement("img");
-        k.setAttribute("src", "./assets/images/keyboard.png");
-        k.style.left = "33%";
-        // k.style.width = "25%";
         k.addEventListener("mousedown", () => choose(Keyboard));
-
-        const t = document.createElement("img");
-        t.setAttribute("src", "./assets/images/trackpad.png");
-        t.style.right = "33%";
-        // t.style.width = "14%";
         t.addEventListener("mousedown", () => choose(Trackpad));
 
-        disp.appendChild(k);
-        disp.appendChild(t);
 
-        console.log("opened");
+        return disp;
     }
+
 
     get_target() {
         if (this.activeFocus) {
             const disp = document.getElementById("display");
-            disp.querySelectorAll("img").forEach(img => disp.removeChild(img));
+            disp.innerHTML = "";
             this.settings.controller = this.activeFocus.name;
             localStorage.settings = JSON.stringify(this.settings);
             return super.get_target();
@@ -91,12 +114,35 @@ class Start extends Page {
     constructor(c, ctx) {
         super(c, ctx);
         this.target = Game;
-        this.end = 0;
+
+        this.create_overlay();
     }
 
-    update() {
-        console.log("DONE");
+    create_overlay() {
+        const disp = super.create_overlay();
+
+        const s = this.create_e(disp, "h1", "Start", undefined, ["clickable"]);
+
+        const c = this.create_e(disp, "h1", "Controls", undefined, ["clickable"]);
+
+        const choose = (focus) => {
+            this.activeFocus = focus;
+            this.end = 1
+        }
+
+        s.addEventListener("mousedown", () => choose(Game));
+        c.addEventListener("mousedown", () => choose(Setup));
+
     }
+
+    get_target() {
+        if (this.activeFocus) {
+            const disp = document.getElementById("display");
+            disp.innerHTML = "";
+            return this.activeFocus;
+        }
+    }
+
 }
 
 /**
@@ -106,7 +152,6 @@ class Game extends Page {
     constructor(controller = new Trackpad("controls")) {
         super();
         this.controller = controller;
-        this.end = 0;
         this.map = new GameMap(5);
         this.factor = 256;
         this.target = Start;
@@ -118,6 +163,8 @@ class Game extends Page {
 
     get_target(c, ctx) {
         ctx.clearRect(0, 0, c.width, c.height);
+        const controls = document.getElementById("controls");
+        controls.innerHTML = "";
 
         return this.target;
     }

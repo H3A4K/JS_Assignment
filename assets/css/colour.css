@@ -8,6 +8,11 @@
  */
 
 :root {
-    --bg-colour : white;
-    --fg-colour : black;
+    --bg-colour : #222;
+    --fg-colour : white;
+
+    --h-bg-colour : beige;
+    --h-fg-colour : #222;
+
+    --hover-colour: #444;
 }

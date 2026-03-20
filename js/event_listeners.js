@@ -12,23 +12,14 @@ window.addEventListener("load", () => {
 
     let activeInstance =  new Splash();
 
+    const exit = document.getElementById("exit");
+    exit.addEventListener("mousedown", () => change_instance())
 
+    function change_instance() {
+        let target = activeInstance.get_target(c, ctx)
 
-    function change_instance(target) {
         if (!target) { return }
 
-        // gets relavent information
-        // switch (true) {
-        //     case activeInstance instanceof Splash:
-        //     case activeInstance instanceof Start:
-        //     case activeInstance instanceof Game:
-        //         break;
-        //     case activeInstance instanceof Setup:
-        //         // console.log(controller);
-        //         break;
-        // }
-
-        // changes to proper page
         switch (target) {
             case Splash: case Setup: case Start:
                 activeInstance = new target();
@@ -45,7 +36,7 @@ window.addEventListener("load", () => {
     setInterval(() => {
         activeInstance.update(c, ctx);
         if (activeInstance.end) {
-            change_instance(activeInstance.get_target(c, ctx));
+            change_instance();
         }
     }, 1);
 

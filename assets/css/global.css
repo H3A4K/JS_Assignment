@@ -12,79 +12,114 @@
 
 /* Formating */
 * {
+    background-color: var(--bg-colour);
+    color: var(--fg-colour);
     margin : 0;
     padding : 0;
     border : 0;
-    /* background-color: #222; */
-}
-
-html {
-    background-color: var(--bg-colour);
+    font-size: 2vh + 2vw;
+    list-style: none;
 }
 
 body {
-    background-color: var(--bg-colour);
-    color: var(--fg-colour);
-
     overflow: hidden;
 }
 
-/* canvas {
-    max-width: 99.48vw; 
-    max-height: 99.48vh;
-} */
+header, header *, footer, footer * {
+    background-color: var(--h-bg-colour);
+    color: var(--h-fg-colour)
+}
 
-/* #banner {
-    max-height: 80%;
-    max-width: 80%;
-} */
+header, footer {
+    width: 100vw;
+    z-index: 20;
+}
 
-/* #banner {
-    left: 10%;
-    top: 5%;
-    bottom: 5%;
-} */
+header {
+    position: relative;
+    height: 7.5vh;
+}
+
+footer {
+    position: absolute;
+    height: 2.5vh;
+    bottom: 0;
+}
+
+header h1 {
+    padding-top: 2.5%;
+    text-align: center;
+}
+
+#exit {
+    position: absolute;
+    top : 0;
+    bottom: 0;
+    z-index: 30;
+}
+
 
 .main {
     /* https://stackoverflow.com/questions/73546361/how-to-make-a-canvas-proportionally-responsive */
     /* width: 50vmin;
     height: 100vmin; */
-    background-color: #222;
+    /* background-color: #222; */
     position: absolute;
     top: 0;
     left: 0;
 }
 
 #display {
-    display: block;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 99vh;
     align-items: center;
 }
 
-#display > img {
-    filter: invert(75%);
-    /* margin-left: 25%; */
-    /* margin-bottom: 10%; */
+#display > * {
     z-index: 10;
-    width: 33%;
+    /* max-width: 25%; */
+    width: 100%;
+    height: 40%;
     padding: 12.5%;
+    align-items: center;
+    text-align: center;
 }
 
 .trackpad {
-    position:absolute;
+    position: absolute;
     bottom: 5%;
     left: 5%;
     z-index: 10;
     border-radius: 100%;
 }
 
-@media (min-width: 720px) {
+@media (max-width: 720px) {
     #display {
-        display: flex;
+        flex-direction: column;
+        align-self: center;
     }
 
-    #display > img {
-        margin-top: 10%;
-        padding: 12.5%;
+    #display > * {
+        align-self: center;
+        width: 75vw;
     }
     
+}
+
+@media (min-width: 720px) {
+    #display {
+        align-self: center;
+    }
+
+}
+
+.clickable:hover, .clickable:hover * {
+    cursor: grab;
+    background-color: var(--hover-colour);
+}
+
+.hidden {
+    display: none;   
 }
