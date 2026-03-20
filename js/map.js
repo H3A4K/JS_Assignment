@@ -7,205 +7,212 @@
  * Houses auto generative map creation
  */
 class Room {
-    constructor(pos, connections) {
-        this.pos = pos;
-        this.connections = connections;
-        this._expansion = 1;
+    constructor(x, y, exits) {
+        this.x = x;
+        this.y = y;
+        this.exits = exits;
+        // 0001 -> N
+        // 0010 -> E
+        // 0100 -> S
+        // 1000 -> W
     }
 
-    get neighbors() {
-        let out = [];
-
-        for (let i = 0; i < 4; i++) {
-            if (this.connections & (2 ** i)) {
-                out[i] = [this.pos[0] + ((i - 1) % 2), this.pos[1] + Math.floor(Math.sin(i * Math.PI / 2))];
+    get adjacent() {
+        const out = [];
+        for (let i = 0; i < 4; i ++) {
+            if (this.exits & 1 << i) {
+                out[i] = [this.x - ((i - 2) % 2), this.y + ((i - 1) % 2)]
             }
         }
-
+        //  0  1  2  3  i
+        //  1  0 -1  0  y
+        //  0  1  0 -1  x
         return out;
-        // return [
-        //     this.connections & 1 ? [this.pos[0] - 1, this.pos[1]] : [null, null], // N
-        //     this.connections & 2 ? [this.pos[0], this.pos[1] + 1] : [null, null], // E
-        //     this.connections & 4 ? [this.pos[0] + 1, this.pos[1]] : [null, null], // S
-        //     this.connections & 8 ? [this.pos[0], this.pos[0] - 1] : [null, null]  // W
-        // ];
     }
 
-    set expansion(bool) {
-        this._expansion = bool;
+    pos_by_direction(direction) {
+        let index = Math.log2(direction);
+        return pos_by_index(index);
     }
 
-    get expansion() {
-        return this._expansion;
+    pos_by_index(index) {
+        return [this.x - ((index - 2) % 2), this.y + ((index - 1) % 2)];
     }
+
+    add(exit) {
+        let n = this.exits | exit;
+        if (n >= 0 && n <= 15) {
+            this.exits = n;
+        }
+    }
+
+    subtract(exit) {
+        let n = this.exits & (~exit);
+        if (n >= 0 && n <= 15) {
+            this.exits = n;
+        }
+    }
+
+    draw(ctx, factor, colour = "rgba(0, 255, 0, 0.5)") {
+        if (this.x === 0 && this.y === 0) {
+            colour = "rgba(255, 215, 0, 1)";
+        }
+        let half = factor / 2;
+        let space_between = factor / 16;
+
+        ctx.fillStyle = colour;
+        ctx.fillRect(
+            this.x * factor - half, 
+            this.y * factor - half, 
+            factor, factor
+        );
+
+        for (let i = 0; i < 4; i++) {
+            if (!(1 << i & this.exits)) {
+                let x = (n) => factor * (this.x + 1/2 * (Math.abs(n - 1.5) < 1 ? 1 : -1));
+                let y = (n) => factor * (this.y + 1/2 * (n > 1 ? 1 : -1));
+                ctx.beginPath();
+                ctx.moveTo(x(i), y(i));
+                ctx.lineTo(x((i + 1) % 4), y((i + 1) % 4));
+                ctx.closePath();
+                ctx.strokeStyle = "rgba(0, 0, 255, 1)";
+                ctx.lineWidth = space_between / 2;
+                ctx.stroke();
+            }
+        }
+    }
+
 }
+
 
 class GameMap {
-    #prob = 0.5;
+    constructor(num_rooms = 100) {
+        this.rooms = new Array(new Room(0, 0, 15));
+        this.possible_rooms = [...this.rooms[0].adjacent];
 
-    constructor() {
-        origin = new Room([0, 0], 15);
-        this.map = new Array(origin);
-        this.invalid = new Map();
+        this.invalid = new Set();
+        this.invalid.add("0,0");
 
-        this.previous_nodes = new Array(origin);
-        // console.log(this.map)
-        this.previous_nodes = this.#generate();
-        // console.log(this.map)
+        this.start; this.end;
+
+        // make a room
+        // generate random directions
+            // pick a random room to go from
+            // generate more random directions
+
+        this.generate(num_rooms);
     }
 
-    // get #previous_nodes() {
-    //     let out = [];
-    //     for (let i = 0; i < this.map.length; i++) {
-    //         if (this.map[i].expansion) {
-    //             out.push(this.map[i]);
-    //         }
-    //     }
+    generate(num_rooms) {
+        while (this.rooms.length < num_rooms && this.possible_rooms.length > 0) {
+            let ind = Math.floor(Math.random() * this.possible_rooms.length);
+            let temp_pos = this.possible_rooms[ind];
 
-    //     return out;
-    // }
-
-    #generate() {
-        console.log("AA", this.previous_nodes);
-        const MAX_NODES = 100;
-        let i = this.map.length;
-        while (i < MAX_NODES && this.previous_nodes.at(-1)) {
-            const prev = this.previous_nodes.at(-1);
-            prev.expansion = 0;
-            this.previous_nodes.pop();
-            // if (!prev) {
-            //     console.log(previous_nodes, i)
-            //     return;
-            // }
-            // console.log(prev);
-            const neighbors = prev.neighbors;
-            for (const pos in neighbors) {
-                // this.invalid.set(neighbors[pos].join(","), 1);
-                const connections = this.#generate_connections(neighbors[pos]);
-                const node = new Room(neighbors[pos], connections);
-                this.map.push(node);
-                i++;
-
-                if (connections) {
-                    // console.log("A", this.previous_nodes);
-                    this.previous_nodes.push(node);
-                    // console.log("B", this.previous_nodes);
-                }
+            if (temp_pos === null || this.invalid.has(temp_pos.join(","))) {
+                this.remove_index(this.possible_rooms, ind);
+                continue;
             }
-            // console.log(previous_nodes);
-            // console.log(this.invalid)
 
-            // if (prev === this.previous_nodes.at(-1)) {
-            //     // console.log(prev.expansion);
-            //     prev.expansion = 0;
-            //     // previous_nodes.at(-1).expansion = 0;
-            //     // this.previous_nodes.pop();
-            // }
+            let exits = 0;
+            let available = this.available(temp_pos);
+            
+            const num = Math.floor(Math.random() * (available.length - 1)) + 1;
+            for (let i = 0; i < num; i ++) {
+                let index = Math.floor(Math.random() * available.length);
+                this.possible_rooms.push(available[index][0]);
+                exits += available[index][1];
+                this.remove_index(available, index);
+            }
 
+            this.add_room(temp_pos, exits);
 
+            this.remove_index(this.possible_rooms, ind);
         }
-        console.log(i);
 
-        for (const node in this.previous_nodes) {
-            this.previous_nodes[node].expansion = 1;
-        }
+        this.purge_possible_rooms();
 
-        return this.previous_nodes;
+        this.add_room(this.possible_rooms[0], 0);
+        this.remove_index(this.possible_rooms, 0);
+
+        this.add_room(this.possible_rooms[this.possible_rooms.length - 1], 0);
+        this.remove_index(this.possible_rooms, this.possible_rooms.length - 1);
+
+        this.remove_unused_exits();
     }
 
-    #generate_connections(pos) {
-        // do only one?
+    add_room(pos, exits) {
+        this.invalid.add(pos.join(","));
+        this.rooms.push(new Room(pos[0], pos[1], exits));
+    }
 
-        let out = 0;
-        for (let i = 0; i < 4; i++) {
-            if (this.#rand()) { continue }
-            let newPos = [pos[0] + ((i - 1) % 2), pos[1] + Math.floor(Math.sin(i * Math.PI / 2))];
-            if (!this.invalid.get(newPos.join(","))) {
-                out += 2 ** i;
-                this.invalid.set(newPos.join(","), 1);
+    remove_index(arr, index) {
+        arr.splice(index, 1);
+    }
+
+    available(pos) {
+        const out = []
+        for (let i = 0; i < 4; i ++) {
+            let potential = [pos[0] - ((i - 2) % 2), pos[1] + ((i - 1) % 2)];
+            let key = potential.join(",");
+            if (!this.invalid.has(key) || this.possible_rooms.includes(potential)) {
+                out.push([potential, 1 << i]);
             }
         }
-
         return out;
     }
 
-    #rand() {
-        return Math.floor(Math.random() / this.#prob);
-        // will be true 1/prob : 1 times, thus canceling the action
-        //       - false  prob : 1 times, thus continuing the action
+    purge_possible_rooms() {
+        let rm_ind = [];
+        this.possible_rooms.forEach((room, index) => {
+            if (this.invalid.has(room.join(",")) || this.rooms.find(r => r.x === room[0] && r.y === room[1]) !== undefined) {
+                rm_ind.push(index);
+            }
+        });
+
+        rm_ind.forEach(ind => this.remove_index(this.possible_rooms, ind));
+    }
+
+    remove_unused_exits() {
+        this.rooms.forEach(room => {
+            for (let i = 0; i < 4; i ++) {
+                if (!(room.exits & 1 << i)) { continue }
+
+                const adj_pos = room.pos_by_index(i);
+                // console.log(i, room, adj_pos)
+                const adj = this.rooms.find(r => r.x === adj_pos[0] && r.y === adj_pos[1]);
+                if (adj === undefined) {
+                    room.subtract(1 << i);
+                }
+
+                const adj_dir = 1 << (i + 2) % 4;
+
+                if (!this.invalid.has(adj_pos.join(","))) {
+                    room.subtract(1 << i);
+                } else {
+                    // console.log("added", room, i, adj, adj_dir);
+                    adj.add(adj_dir);
+                    // console.log("result", adj);
+                }
+            }
+        })
+    }
+
+    get start() {
+        return this.rooms[this.rooms.length - 2];
+    }
+
+    get end() {
+        return this.rooms[this.rooms.length - 1];
+    }
+
+    draw(ctx, factor) {
+        // this.possible_rooms.forEach(room => {
+        //     let a = new Room(room[0], room[1], 0);
+        //     a.draw(ctx, factor, "rgba(255, 255, 255, 1)");
+        // });
+
+        this.rooms.slice(0, this.rooms.length - 2).forEach(room => room.draw(ctx, factor));
+        this.rooms[this.rooms.length - 2].draw(ctx, factor, "rgba(255, 255, 255, 1)");
+        this.rooms[this.rooms.length - 1].draw(ctx, factor, "rgba(20, 20, 20, 1)");
     }
 }
-
-
-
-// class Map {
-//     constructor() {
-//         this.directions = {
-//             north: 1,
-//             east: 2,
-//             south: 4,
-//             west: 8
-//         };
-
-//         this.map = {};
-//         this.max_nodes = 100;
-//         this.node_prob = 0.5;
-//         this.preExistingNode_prob = 0.05;
-
-//         this.generate([0, 0]);
-//         // console.log(this.map);
-//     }
-
-//     nodes() {
-//         return Object.keys(this.map).length;
-//     }
-
-//     #rand(prob = this.node_prob) {
-//         return !Math.floor(Math.random() / (prob == 0 ? this.prob : prob));
-//     }
-
-//     #direction_to_pos(base_pos, direction) {
-//         return [base_pos[0] + (direction == "east" ? 1 : direction == "west" ? -1 : 0),
-//                 base_pos[1] + (direction == "south" ? 1 : direction == "north" ? -1 : 0)];
-//     }
-
-//     generate(pos) {
-//         this.#new_node(pos);
-//         let connections = 0;
-//         let direc;
-//         for (direc of Object.keys(this.directions)) {
-//             if (this.nodes() >= this.max_nodes) {
-//                 break;
-//             }
-//             let new_pos = this.#direction_to_pos(pos, direc);
-//             if (this.map[this.#node_string(new_pos)] && this.#rand(this.preExistingNode_prob)) {
-//                 connections += this.directions[direc];
-//                 this.#add_to_node(this.directions[direc]);
-//             } else if (this.#rand(this.node_prob)) {
-//                 connections += this.directions[direc];
-//                 this.generate(new_pos);
-//             }
-//         }
-//         this.#update_node(pos, connections);
-//     }
-
-//     #node_string(pos) {
-//         return pos.join(",");
-//     }
-
-//     #new_node(pos) {
-//         this.map[this.#node_string(pos)] = 0;
-//     }
-
-//     #update_node(pos, connections) {
-//         this.map[this.#node_string(pos)] = connections;
-//     }
-
-//     #add_to_node(pos, connection) {
-//         let current = this.map[this.#node_string(pos)];
-//         if (! (current & connection)) {
-//             this.map[this.#node_string(pos)] += connection;
-//         }
-//     }
-
-// }

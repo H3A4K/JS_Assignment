@@ -9,79 +9,56 @@
 window.addEventListener("load", () => {
     const c = document.getElementById("banner");
     const ctx = c.getContext("2d");
-    let controller = null;
 
-    let activeInstance = new Splash(c, ctx);
+    let activeInstance =  new Splash();
 
-    const r = new GameMap();
 
-    console.log(r);
-
-    // let controler = new Trackpad("controls");
-    // let controler = new Keyboard();
 
     function change_instance(target) {
         if (!target) { return }
 
         // gets relavent information
-        switch (true) {
-            case activeInstance instanceof Splash:
-            case activeInstance instanceof Game:
-                break;
-            case activeInstance instanceof Setup:
-                controller = new activeInstance.activeFocus();
-                console.log(controller);
-                break;
-        }
+        // switch (true) {
+        //     case activeInstance instanceof Splash:
+        //     case activeInstance instanceof Start:
+        //     case activeInstance instanceof Game:
+        //         break;
+        //     case activeInstance instanceof Setup:
+        //         // console.log(controller);
+        //         break;
+        // }
 
         // changes to proper page
         switch (target) {
-            case Splash: case Setup:
-                activeInstance = new target(c, ctx);
+            case Splash: case Setup: case Start:
+                activeInstance = new target();
                 break;
             case Game:
-                activeInstance = new target(c, ctx, controller);
+                let controller_string = JSON.parse(localStorage.settings).controller;
+                let controller = controller_string == "Keyboard" ? new Keyboard() : new Trackpad();
+                activeInstance = new target(controller);
                 break;
         }
+        console.log(activeInstance)
     }
 
     setInterval(() => {
-        activeInstance.update();
-        // if (activeInstance.end) {
-        //     change_instance(activeInstance.get_target());
-        // }
+        activeInstance.update(c, ctx);
+        if (activeInstance.end) {
+            change_instance(activeInstance.get_target(c, ctx));
+        }
     }, 1);
+
     
     // Allows for resizing the canvas
     function adjust_view_port() {
-        c.width = screen.width;
-        c.height = screen.height;
-        console.log(c.width, c.height)
-        // draw();
+        c.width = screen.width * 1;
+        c.height = screen.height * 1;
+
+        activeInstance.update(c, ctx);
     }
     window.addEventListener("resize", adjust_view_port);
     adjust_view_port();
+
 });
 
-
-    // ball = {
-    //     x: 100, y: 100, radius: 10
-    // }
-
-    // function update() {
-    //     let vector = controler.get_adjusted_vector();
-    //     ball.x += vector.x;
-    //     ball.y += vector.y;
-    //     draw();
-    // }
-
-
-
-    // function draw() {
-    //     ctx.clearRect(0, 0, c.width, c.height)
-    //     ctx.beginPath();
-    //     ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
-    //     ctx.closePath();
-    //     ctx.fillStyle = "red";
-    //     ctx.fill();
-    // }

@@ -34,6 +34,17 @@ body {
     max-height: 99.48vh;
 } */
 
+/* #banner {
+    max-height: 80%;
+    max-width: 80%;
+} */
+
+/* #banner {
+    left: 10%;
+    top: 5%;
+    bottom: 5%;
+} */
+
 .main {
     /* https://stackoverflow.com/questions/73546361/how-to-make-a-canvas-proportionally-responsive */
     /* width: 50vmin;

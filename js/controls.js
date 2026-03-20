@@ -7,12 +7,12 @@
  * Houses the class and methods for moving player objects
  */
 
+/**
+ * Creates a mobile + desktop canvas element on a parent element
+ * 
+ * @param {String} parent_ID the HTML id of the element that should house the trackpad
+ */
 class Trackpad {
-    /**
-     * Creates a mobile + desktop canvas element on a parent element
-     * 
-     * @param {String} parent_ID the HTML id of the element that should house the trackpad
-     */
     constructor(parent_ID = "controls") {
         // create canvas element
         const p = document.getElementById(parent_ID);
@@ -34,9 +34,9 @@ class Trackpad {
         this.x = 0;
         this.y = 0;
         
-        let colour = "rgba(150, 150, 150, 0.5)";
-        this.ctx.strokeStyle = colour;
-        this.ctx.fillStyle = colour;
+        this.colour = "rgba(150, 150, 150, 0.5)";
+        // this.ctx.strokeStyle = colour;
+        // this.ctx.fillStyle = colour;
 
         const track_mouse = (event) => {
             this.#get_pos(event);
@@ -69,10 +69,10 @@ class Trackpad {
     }
 
 
-    get_adjusted_vector() {
+    get_adjusted_vector(factor) {
         let x = this.x / this.EXTREMA;
         let y = this.y / this.EXTREMA;
-        let mult = (x ** 2 + y ** 2) ** (1 / 2);
+        let mult = (x ** 2 + y ** 2) ** (1 / 2) / factor;
         x *= mult; y *= mult;
         return {x:x, y:y};
     }
@@ -119,7 +119,7 @@ class Trackpad {
         this.ctx.closePath();
 
         this.ctx.lineWidth = 2;
-        // this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
+        this.ctx.strokeStyle = this.colour;
         this.ctx.stroke();
     }
 
@@ -134,18 +134,23 @@ class Trackpad {
         this.ctx.arc(this.CENTER, this.CENTER, this.CENTER - 4, 0, 2 * Math.PI);
         this.ctx.closePath();
         this.ctx.lineWidth = this.BORDER;
-        // this.ctx.strokeStyle = this.colour;
+        this.ctx.strokeStyle = this.colour;
         this.ctx.stroke();
 
         // circle at this.x, this.y, or touching boudary at maximum
         this.ctx.beginPath();
         this.ctx.arc(this.x + this.CENTER, this.y + this.CENTER, this.USER_RADIUS, 0, 2 * Math.PI);
         this.ctx.closePath();
-        // this.ctx.fillStyle = this.colour;
+        this.ctx.fillStyle = this.colour;
         this.ctx.fill();
     }
 }
 
+/**
+ * Keyboard
+ * 
+ * Allows for keyboard inputs
+ */
 class Keyboard {
     constructor() {
         this.keysPressed = {};
@@ -193,7 +198,7 @@ class Keyboard {
         this.v_y *= factor;
     }
 
-    get_adjusted_vector() {
-        return {x:this.v_x, y:this.v_y};
+    get_adjusted_vector(factor) {
+        return {x:this.v_x / factor, y:this.v_y / factor};
     }
 }
