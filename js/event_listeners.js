@@ -10,7 +10,7 @@ window.addEventListener("load", () => {
     const c = document.getElementById("banner");
     const ctx = c.getContext("2d");
 
-    let activeInstance =  new Splash();
+    let activeInstance =  new Splash(c);
 
     const exit = document.getElementById("exit");
     exit.addEventListener("mousedown", () => {
@@ -32,43 +32,35 @@ window.addEventListener("load", () => {
 
     function change_instance(target) {
         if (!target) { return }
-        latest_score = null;
+        latest_score = {score : null};
         switch (true) {
-            case activeInstance instanceof Game:
+            case activeInstance instanceof Maze:
                 latest_score = activeInstance.get_score();
                 add_to_score(latest_score);
                 break;
         }
 
-        console.log(activeInstance, activeInstance instanceof Game, latest_score);
+        // console.log(activeInstance, activeInstance instanceof Game, latest_score);
 
         switch (target) {
             case Splash: 
                 c.classList.remove("hidden");
+                activeInstance = new target(c);
+                break;
+            case Maze: 
+                c.classList.remove("hidden");
                 activeInstance = new target();
                 break;
-            case Setup: case Start:
+            case Settings: case Start: case Info:
                 c.classList.add("hidden");
                 activeInstance = new target();
-                break;
-            case Game:
-                c.classList.remove("hidden");
-                let ls = localStorage.settings;
-                let controller_string;
-                if (!ls) {
-                    controller_string = "Trackpad";
-                } else {
-                    controller_string = JSON.parse(localStorage.settings).controller;
-                }
-                let controller = controller_string == "Keyboard" ? new Keyboard() : new Trackpad();
-                activeInstance = new target(controller);
                 break;
             case Scoreboard:
                 c.classList.add("hidden");
-                activeInstance = new target(latest_score);
+                activeInstance = new target(latest_score.score);
                 break;
         }
-        console.log(activeInstance)
+        // console.log(activeInstance)
     }
 
     setInterval(() => {

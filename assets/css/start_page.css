@@ -1,0 +1,13 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 20 03 26
+ * Date Modified : 21 03 26
+ * 
+ * Start Page CSS
+ */
+@import url(./colour.css);
+
+#home * {
+    padding: 6vh;
+}

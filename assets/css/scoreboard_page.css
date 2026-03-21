@@ -1,0 +1,45 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 20 03 26
+ * Date Modified : 21 03 26
+ * 
+ * Scoreboard Page CSS
+ */
+@import url(./colour.css);
+
+#scores, #example_score {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-around;
+}
+
+#scores > li, #example_score > li {
+    width: 30%;
+    padding: 2.5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (max-width: 720px) or (max-aspect-ratio: 1/1) {
+    #example_score {
+        margin-left: 2.4%;
+    }
+    #example_score > li:last-child {
+        display: none;
+    }
+
+    #scores {
+        padding-left: 2.5%;
+        padding-right: 2.5%;
+    }
+
+    #scores > li, #example_score > li {
+        width: 85%;
+        margin-bottom: 2.5%;
+    }
+}

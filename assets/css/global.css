@@ -9,16 +9,24 @@
 
 /* Imports */
 @import url(./colour.css);
+@import url(./pages.css);
+@import url(./info.css);
+@import url(./start_page.css);
+@import url(./settings_page.css);
+@import url(./scoreboard_page.css);
 
 /* Formating */
 * {
-    /* background-color: var(--bg-colour); */
     color: var(--fg-colour);
     margin : 0;
     padding : 0;
     border : 0;
-    font-size: 2vh + 2vw;
+    font-size: 3vh;
     list-style: none;
+}
+
+h1 {
+    font-size: 5vh;
 }
 
 body {
@@ -76,21 +84,8 @@ header h1 {
     left: 0;
 }
 
-#display {
-    display: flex;
-    justify-content: space-around;
-    /* width: 100%; */
-    align-items: center;
-}
-
-#display > * {
-    z-index: 10;
-    width: 25%;
-    padding: 5%;
-    border: 2px solid var(--fg-colour);
-    border-radius: 20%;
-    align-items: center;
-    text-align: center;
+.inverted {
+    filter: invert(100%);
 }
 
 .trackpad {
@@ -101,33 +96,18 @@ header h1 {
     border-radius: 100%;
 }
 
-@media (max-width: 720px) {
-    #display {
-        height: 80vh;
-        flex-direction: column;
-        align-self: center;
-    }
-
-    #display > * {
-        align-self: center;
-        width: 75vw;
-    }
-    
+.clickable {
+    border: 1px solid var(--fg-colour);
+    border-radius: 50px;
 }
 
-@media (min-width: 720px) {
-    #display {
-        padding-top: 10%;
-        height: 50vh;
-        align-items: stretch;
-        align-self: center;
-    }
-
-}
-
-.clickable:hover, .clickable:hover * {
+.clickable:hover {
     cursor: grab;
-    background-color: var(--hover-colour);
+    background-color: var(--hover-colour)
+}
+
+.selected {
+    background-color: var(--selected-colour);
 }
 
 .hidden {

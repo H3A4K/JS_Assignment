@@ -1,0 +1,60 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 20 03 26
+ * Date Modified : 21 03 26
+ * 
+ * CSS For All Pages
+ */
+ @import url(./colour.css);
+
+#display {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.title {
+    margin-top: 1%;
+    margin-bottom: 2.5%;
+    text-align: center;
+}
+
+.choices {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.choices > * {
+    width: 30%;
+    padding: 2.5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    min-height: 50%;
+}
+
+.choices > * > * {
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.choices > * > h1 {
+    text-align: center;
+    text-decoration: underline;
+    padding-bottom: 5%;
+}
+
+@media (max-width: 720px) {
+    .choices {
+        flex-direction: column;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
+    }
+
+    .choices > * {
+        width: 85%;
+        margin-bottom: 2.5%;
+    }
+}

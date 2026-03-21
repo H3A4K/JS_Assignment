@@ -1,0 +1,28 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 20 03 26
+ * Date Modified : 21 03 26
+ * 
+ * Settings Page CSS
+ */
+@import url(./colour.css);
+
+#rooms {
+    margin-left: 5%;
+    display: flex;
+    width: 87.5%;
+    justify-content: space-between;
+    border-radius: 50px;
+}
+
+#rooms > input {
+    width: 80%;
+}
+
+
+@media (max-width: 720px) {
+    #rooms > input{
+        width: 70%;
+    }
+}

@@ -1,0 +1,18 @@
+/* 
+ * Author : Alexander Perlock
+ * MACID : perlocka
+ * Date Created : 21 03 26
+ * Date Modified : 21 03 26
+ * 
+ * Info Page CSS
+ */
+@import url(./colour.css);
+
+#credits p, #info p {
+    margin-bottom: 5%;
+}
+
+#info p {
+    text-align: center;
+}
+

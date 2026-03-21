@@ -53,10 +53,7 @@ class Room {
         }
     }
 
-    draw(ctx, factor, colour = "rgba(0, 255, 0, 0.5)") {
-        // if (this.x === 0 && this.y === 0) {
-        //     colour = "rgba(255, 215, 0, 1)";
-        // }
+    draw(ctx, factor, colour = "rgba(160, 160, 160, 0.5)") {
         let half = factor / 2;
         let space_between = factor / 16;
 
@@ -75,7 +72,7 @@ class Room {
                 ctx.moveTo(x(i), y(i));
                 ctx.lineTo(x((i + 1) % 4), y((i + 1) % 4));
                 ctx.closePath();
-                ctx.strokeStyle = "rgba(0, 0, 255, 1)";
+                ctx.strokeStyle = "rgba(60, 60, 60, 1)";
                 ctx.lineWidth = space_between / 2;
                 ctx.stroke();
             }
@@ -178,7 +175,6 @@ class GameMap {
                 if (!(room.exits & 1 << i)) { continue }
 
                 const adj_pos = room.pos_by_index(i);
-                // console.log(i, room, adj_pos)
                 const adj = this.rooms.find(r => r.x === adj_pos[0] && r.y === adj_pos[1]);
                 if (adj === undefined) {
                     room.subtract(1 << i);
@@ -189,9 +185,7 @@ class GameMap {
                 if (!this.invalid.has(adj_pos.join(","))) {
                     room.subtract(1 << i);
                 } else {
-                    // console.log("added", room, i, adj, adj_dir);
                     adj.add(adj_dir);
-                    // console.log("result", adj);
                 }
             }
         })
@@ -206,13 +200,8 @@ class GameMap {
     }
 
     draw(ctx, factor) {
-        // this.possible_rooms.forEach(room => {
-        //     let a = new Room(room[0], room[1], 0);
-        //     a.draw(ctx, factor, "rgba(255, 255, 255, 1)");
-        // });
-
         this.rooms.slice(0, this.rooms.length - 2).forEach(room => room.draw(ctx, factor));
         this.rooms[this.rooms.length - 2].draw(ctx, factor, "rgba(255, 255, 255, 1)");
-        this.rooms[this.rooms.length - 1].draw(ctx, factor, "rgba(20, 20, 20, 1)");
+        this.rooms[this.rooms.length - 1].draw(ctx, factor, "rgba(255, 215, 0, 1)");
     }
 }
