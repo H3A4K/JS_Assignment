@@ -82,7 +82,7 @@ window.addEventListener("load", () => {
     // Allows for resizing the canvas
     function adjust_view_port() {
         c.width = screen.width * 1;
-        c.height = screen.height * 0.9;
+        c.height = screen.height * 0.75;
 
         activeInstance.update(c, ctx);
     }

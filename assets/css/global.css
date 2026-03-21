@@ -90,8 +90,11 @@ header h1 {
 
 .trackpad {
     position: absolute;
-    bottom: 5%;
-    left: 5%;
+    bottom: 3vh;
+    /* left: 5%; */
+    left: 5vw;
+    /* right: 50%; */
+    /* transform: translate(50%, 50%); */
     z-index: 10;
     border-radius: 100%;
 }
