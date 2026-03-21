@@ -22,7 +22,7 @@
 
 
 @media (max-width: 720px) {
-    #rooms > input{
+    #rooms > input {
         width: 70%;
     }
 }

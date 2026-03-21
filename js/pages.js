@@ -421,7 +421,7 @@ class Info extends Page {
         const info = this.create_e(disp, "div", undefined, "info");
         this.create_e(info, "p", "The objective of the maze is to navigate to a randomly generated golden coloured exit.");
         this.create_e(info, "p", "At any time you may click the exit button in the top left corner to return to the main menu.");
-        this.create_e(info, "p", "All click-able elements (except for the afromentioned exit button) are denoted by their round borders.");
+        this.create_e(info, "p", "All other click-able elements are denoted by their round borders.");
 
         this.create_e(disp, "h1", "Credits", undefined, ["title"]);
         const credits = this.create_e(disp, "div", undefined, "credits");

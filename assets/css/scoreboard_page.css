@@ -18,7 +18,7 @@
 
 #scores > li, #example_score > li {
     width: 30%;
-    padding: 2.5%;
+    padding: 1.5%;
     padding-left: 5%;
     padding-right: 5%;
     display: flex;
@@ -40,6 +40,6 @@
 
     #scores > li, #example_score > li {
         width: 85%;
-        margin-bottom: 2.5%;
+        margin-bottom: 1.5%;
     }
 }

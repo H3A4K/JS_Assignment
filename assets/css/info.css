@@ -9,7 +9,7 @@
 @import url(./colour.css);
 
 #credits p, #info p {
-    margin-bottom: 2vh;
+    margin-bottom: 1.5vh;
 }
 
 #info p {
