@@ -2,7 +2,7 @@
  * Author : Alexander Perlock
  * MACID : perlocka
  * Date Created : 02 03 26
- * Date Modified : 09 03 26
+ * Date Modified : 21 03 26
  * 
  * Houses the class and methods for moving player objects
  */
@@ -68,7 +68,15 @@ class Trackpad {
         this.render();
     }
 
-
+    /**
+     * Creates a vector object consiting of 
+     *      - x : the x direction vector
+     *      - y : the y direction vector
+     * 
+     * @param {Int} factor the viewport factor, reduces the vector by 1 / factor
+     * 
+     * @returns The vector object
+     */
     get_adjusted_vector(factor) {
         let x = this.x / this.EXTREMA;
         let y = this.y / this.EXTREMA;
@@ -77,6 +85,11 @@ class Trackpad {
         return {x:x, y:y};
     }
 
+    /**
+     * Sets the position of the trackpad to this.x and this.y
+     * 
+     * @param event HTML touch / mouse event
+     */
     #get_pos(event) {
         let x = 0; let y = 0    ;
         if (event.touches) {
@@ -101,7 +114,14 @@ class Trackpad {
         this.y = y;
     }
 
-    #draw_cross() {
+
+    /**
+     * Draws the trackpad
+     */
+    render() {
+        this.ctx.clearRect(0, 0, this.c.width, this.c.height);
+
+        // cross centered at middle
         this.ctx.beginPath();
 
         this.ctx.moveTo(this.CENTER - this.GRID.MAJOR_RADIUS, this.CENTER);
@@ -121,13 +141,6 @@ class Trackpad {
         this.ctx.lineWidth = 2;
         this.ctx.strokeStyle = this.colour;
         this.ctx.stroke();
-    }
-
-    render() {
-        this.ctx.clearRect(0, 0, this.c.width, this.c.height);
-
-        // cross centered at middle
-        this.#draw_cross();
 
         // outer circle boundary
         this.ctx.beginPath();
@@ -167,11 +180,16 @@ class Keyboard {
         })
     }
 
+    /**
+     * Categorises valid keyboard inputs
+     * 
+     * Pushes the vector direction to this.v_x and this.v_y
+     */
     #inputs() {
         this.v_x = 0;
         this.v_y = 0;
-        let factor = 1;
-        // console.log(this.keysPressed);
+        let mult = 1;
+
         Object.keys(this.keysPressed).forEach(key => {
             switch (key) {
                 case "KeyW": // Up
@@ -187,17 +205,26 @@ class Keyboard {
                     this.v_x += 1;
                     break;
                 case "ShiftLeft": // Slow
-                    factor = 0.5;
+                    mult = 0.5;
             }
         });
         if (Math.abs(this.v_x) + Math.abs(this.v_y) > 1) {
             this.v_x /= Math.sqrt(2);
             this.v_y /= Math.sqrt(2);
         }
-        this.v_x *= factor;
-        this.v_y *= factor;
+        this.v_x *= mult;
+        this.v_y *= mult;
     }
 
+    /**
+     * Creates a vector object consiting of 
+     *      - x : the x direction vector
+     *      - y : the y direction vector
+     * 
+     * @param {Int} factor the viewport factor, reduces the vector by 1 / factor
+     * 
+     * @returns The vector object
+     */
     get_adjusted_vector(factor) {
         return {x:this.v_x / factor, y:this.v_y / factor};
     }

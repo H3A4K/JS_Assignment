@@ -52,23 +52,47 @@ class Maze extends Page {
         return {controller : this.settings.controller, rooms : 10 ** this.settings.rooms, score : (time - this.start) / 1000};
     }
 
+    /**
+     * Clears the screen of unneeded elements and clears the canvas element
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     clear(c, ctx) {
         super.clear(c, ctx);
         const controls = document.getElementById("controls");
         controls.innerHTML = "";
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         this.clear(c, ctx);
 
         return this.target;
     }
 
+    /**
+     * Updates the page and canvas
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     update(c, ctx) {
         this.move();
         this.#render(c, ctx);
     }
 
+    /**
+     * Moves the player through the maze
+     */
     move() {
         let vector = this.controller.get_adjusted_vector(this.factor / 4);
 
@@ -88,6 +112,12 @@ class Maze extends Page {
         }
     }
 
+    /**
+     * Validates the player's movement along an axis
+     * 
+     * @param vector the player's x,y vector
+     * @param dir the direction to validate
+     */
     validate_move(vector, dir) {
         let rot;
         if (dir == "x") {
@@ -117,6 +147,12 @@ class Maze extends Page {
 
     }
 
+    /**
+     * Draws the maze and player onto the screen
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     #render(c, ctx) {
         ctx.clearRect(0, 0, c.width, c.height);
 

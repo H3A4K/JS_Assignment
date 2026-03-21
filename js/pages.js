@@ -2,7 +2,7 @@
  * Author : Alexander Perlock
  * MACID : perlocka
  * Date Created : 10 03 26
- * Date Modified : 10 03 26
+ * Date Modified : 21 03 26
  * 
  * Handles the page classes and their respective logic for : 
  *     - moving to the next page
@@ -20,12 +20,28 @@ class Page {
         this.end = 0;
     }
 
+    /**
+     * Creates an overlay to render onto the screen
+     * 
+     * @returns the overlay object
+     */
     create_overlay() {
         const disp = document.getElementById("display");
-        disp.classList.add(this.constructor.name.toLowerCase());
+        // disp.classList.add(this.constructor.name.toLowerCase()); // not actually used -> was for css formating
         return disp;
     }
 
+    /**
+     * Creates a new element and appends it to a parent
+     * 
+     * @param parent the HTML parent element
+     * @param {string} type the HTML element code, if blank assumed to be a paragraph : "p"
+     * @param {string} innerText the innerText of the element
+     * @param {string} id the element's id
+     * @param {Array<string>} classes the list of the element's classes 
+     * 
+     * @returns the new element
+     */
     create_e(parent, type = "p", innerText, id, classes) {
         const e = document.createElement(type);
         if (innerText) {
@@ -42,12 +58,34 @@ class Page {
         return e;
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         return this.target;
     }
 
-    update() { }
+    /**
+     * Updates the page and canvas
+     * 
+     * Parent is empty - allows for calling of a null function
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
+    update(c, ctx) {}
 
+    /**
+     * Clears the screen of unneeded elements and clears the canvas element
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     clear(c, ctx) {
         const disp = document.getElementById("display");
         disp.classList.remove(this.constructor.name.toLowerCase());
@@ -58,9 +96,10 @@ class Page {
 
 /**
  * Handles Splash Page / Logic
+ * 
+ * @param c the canvas element
  */
 class Splash extends Page {
-
     constructor(c) {
         super();
         this.target = Info;
@@ -71,12 +110,27 @@ class Splash extends Page {
         c.addEventListener("mousedown", () => this.end = 1);
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         this.clear(c, ctx);
         document.querySelector("header").childNodes.forEach(child => child.classList.remove("hidden"));
         return super.get_target();
     }
 
+    /**
+     * Updates the page and canvas
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     update(c, ctx) {
         if (this.graphic_size < 2) {
             this.graphic_size += 0.01;
@@ -84,6 +138,12 @@ class Splash extends Page {
         this.#render(c, ctx)
     }
 
+    /**
+     * Draws the page onto a canvas element
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     */
     #render(c, ctx) {
         ctx.clearRect(0, 0, c.width, c.height);
         ctx.setTransform(1, 0, 0, 1, c.width * 0.5, c.height * 0.2);
@@ -116,6 +176,11 @@ class Start extends Page {
         this.create_overlay();
     }
 
+    /**
+     * Creates an overlay to render onto the screen
+     * 
+     * @returns the overlay object
+     */
     create_overlay() {
         const disp = super.create_overlay();
 
@@ -141,6 +206,15 @@ class Start extends Page {
 
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         if (this.activeFocus) {
             this.clear(c, ctx);
@@ -170,6 +244,11 @@ class Settings extends Page {
 
     }
 
+    /**
+     * Creates an overlay to render onto the screen
+     * 
+     * @returns the overlay object
+     */
     create_overlay() {
         const disp = super.create_overlay();
 
@@ -219,7 +298,15 @@ class Settings extends Page {
         return disp;
     }
 
-
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         this.clear(c, ctx);
 
@@ -244,11 +331,25 @@ class Scoreboard extends Page {
         this.create_overlay(score);
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         this.clear(c, ctx);
         return super.get_target(c, ctx);
     }
 
+    /**
+     * Creates an overlay to render onto the screen
+     * 
+     * @returns the overlay object
+     */
     create_overlay(score) {
         const disp = super.create_overlay();
 
@@ -293,11 +394,25 @@ class Info extends Page {
         this.create_overlay();
     }
 
+    /**
+     * Gets the page that should be displayed next
+     * and clears the current viewing off the page
+     * 
+     * @param c the canvas element
+     * @param ctx the canvas element's ctx
+     * 
+     * @returns the next page to be displayed
+     */
     get_target(c, ctx) {
         this.clear(c, ctx);
         return super.get_target(c, ctx);
     }
 
+    /**
+     * Creates an overlay to render onto the screen
+     * 
+     * @returns the overlay object
+     */
     create_overlay() {
         const disp = super.create_overlay();
 

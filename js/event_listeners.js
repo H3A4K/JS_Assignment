@@ -2,7 +2,7 @@
  * Author : Alexander Perlock
  * MACID : perlocka
  * Date Created : 02 03 26
- * Date Modified : 09 03 26
+ * Date Modified : 21 03 26
  * 
  * Handles functionality on page load
  */
@@ -12,12 +12,18 @@ window.addEventListener("load", () => {
 
     let activeInstance =  new Splash(c);
 
+    // Handles returning to the main menu by clicking the exit element
     const exit = document.getElementById("exit");
     exit.addEventListener("mousedown", () => {
         activeInstance.clear(c, ctx); 
         change_instance(Start);
     });
 
+    /**
+     * Adds a game score to local storage
+     * 
+     * @param s the new score
+     */
     function add_to_score(s) {
         if (s === -1) { return }
         let scores = localStorage.scores;
@@ -30,6 +36,11 @@ window.addEventListener("load", () => {
         localStorage.scores = JSON.stringify(scores);
     }
 
+    /**
+     * Swaps from the current page to target
+     * 
+     * @param target The page to be swapped to
+     */
     function change_instance(target) {
         if (!target) { return }
         latest_score = {score : null};
@@ -39,9 +50,6 @@ window.addEventListener("load", () => {
                 add_to_score(latest_score);
                 break;
         }
-
-        // console.log(activeInstance, activeInstance instanceof Game, latest_score);
-
         switch (target) {
             case Splash: 
                 c.classList.remove("hidden");
@@ -60,9 +68,9 @@ window.addEventListener("load", () => {
                 activeInstance = new target(latest_score.score);
                 break;
         }
-        // console.log(activeInstance)
     }
 
+    // Main update loop
     setInterval(() => {
         activeInstance.update(c, ctx);
         if (activeInstance.end) {
