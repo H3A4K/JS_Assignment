@@ -231,13 +231,15 @@ class Settings extends Page {
     constructor() {
         super();
         let ls = localStorage.settings;
+        console.log("a")
         if (!ls) {
             this.activeFocus = null;
-            this.settings = {controller : null, rooms : 100};
+            this.settings = {controller : null, rooms : 3};
         } else {
             this.settings = JSON.parse(ls);
             this.activeFocus = this.settings.controller;
         }
+        console.log(this.settings)
         this.target = Start;
 
         this.create_overlay();
@@ -276,9 +278,9 @@ class Settings extends Page {
         const rooms = this.create_e(disp, "div", undefined, "rooms");
         this.rooms = this.create_e(rooms, "input", undefined);
         this.rooms.setAttribute("type", "range");
-        this.rooms.setAttribute("min", "0");
-        this.rooms.setAttribute("max", "7");
-        this.rooms.setAttribute("value", this.settings.rooms)
+        this.rooms.setAttribute("min", "1");
+        this.rooms.setAttribute("max", "4");
+        this.rooms.value = this.settings.rooms;
         this.rooms.setAttribute("oninput", "rooscurrent.innerText = 10 ** this.value");
         this.create_e(rooms, "p", 10 ** this.rooms.value, "rooscurrent")
 
@@ -311,7 +313,7 @@ class Settings extends Page {
         this.clear(c, ctx);
 
         this.settings.rooms = this.rooms.value;
-        console.log(this.settings);
+        // console.log(this.settings);
         localStorage.settings = JSON.stringify(this.settings);
         
         c.classList.add("hidden")

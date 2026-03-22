@@ -19,7 +19,7 @@ class Maze extends Page {
         if (!this.settings) {
             this.controller = new Trackpad("controls");
             this.map = new GameMap(1000);
-            this.settings = {controller: "Trackpad", rooms: 1000};
+            this.settings = {controller: "Trackpad", rooms: 3};
         } else {
             this.settings = JSON.parse(this.settings);
             this.controller = this.settings.controller == "Keyboard" ? new Keyboard() : new Trackpad();
